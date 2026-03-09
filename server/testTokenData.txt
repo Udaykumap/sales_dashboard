@@ -1,0 +1,43 @@
+Step 2: Test Public Endpoints (No Token Required)
+Test: Register a new user
+
+
+{
+    "user": {
+        "id": "e50f972b-d0e8-410d-a19f-1a4644debac6",
+        "name": "Jagan n",
+        "email": "jagann@gmail.com",
+        "role": "SALES",
+        "createdAt": "2026-03-09T08:32:39.416Z",
+        "updatedAt": "2026-03-09T08:32:39.416Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1MGY5NzJiLWQwZTgtNDEwZC1hMTlmLTFhNDY0NGRlYmFjNiIsInJvbGUiOiJTQUxFUyIsImlhdCI6MTc3MzA0NTE1OSwiZXhwIjoxNzczMTMxNTU5fQ.8PWzsImyimGipBOBvk9cMzZjT-cQ_pJwRZptwheLbNs",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1MGY5NzJiLWQwZTgtNDEwZC1hMTlmLTFhNDY0NGRlYmFjNiIsInJvbGUiOiJTQUxFUyIsImlhdCI6MTc3MzA0NTE1OSwiZXhwIjoxNzczNjQ5OTU5fQ.dYThkQk5BO2xhg2i9TTrfiJytqZ_Xtp65n8eGGXhY1w"
+}
+
+Test: Login
+{
+    "user": {
+        "id": "e50f972b-d0e8-410d-a19f-1a4644debac6",
+        "name": "Jagan n",
+        "email": "jagann@gmail.com",
+        "role": "SALES",
+        "createdAt": "2026-03-09T08:32:39.416Z",
+        "updatedAt": "2026-03-09T08:32:39.416Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1MGY5NzJiLWQwZTgtNDEwZC1hMTlmLTFhNDY0NGRlYmFjNiIsInJvbGUiOiJTQUxFUyIsImlhdCI6MTc3MzA0NTI4OSwiZXhwIjoxNzczMTMxNjg5fQ.bWixTt_r8k6m3puKNulISd6ztQMGi3LVGXOZh5BLbvE",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU1MGY5NzJiLWQwZTgtNDEwZC1hMTlmLTFhNDY0NGRlYmFjNiIsInJvbGUiOiJTQUxFUyIsImlhdCI6MTc3MzA0NTI4OSwiZXhwIjoxNzczNjUwMDg5fQ.WgzUUGvaAk9qxX6-IPqh7TY1wVZHkv6gx5oznAIJ0Lg"
+}
+
+{
+    "user": {
+        "id": "167d8bb6-c1ac-445a-85a8-1f00e9b3db89",
+        "name": "Uday",
+        "email": "Uday@gmail.com",
+        "role": "ADMIN",
+        "createdAt": "2026-03-09T08:35:55.506Z",
+        "updatedAt": "2026-03-09T08:35:55.506Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2N2Q4YmI2LWMxYWMtNDQ1YS04NWE4LTFmMDBlOWIzZGI4OSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA0NTM1NSwiZXhwIjoxNzczMTMxNzU1fQ.fcslFLoUpshOqXgB_LF-CJ_Z0-Vk6ykD20y4ChTIz1E",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2N2Q4YmI2LWMxYWMtNDQ1YS04NWE4LTFmMDBlOWIzZGI4OSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MzA0NTM1NSwiZXhwIjoxNzczNjUwMTU1fQ.eBI3bsoWk74jBRgqDvdV5ilShVPJ8Il4Bbt4guWSskk"
+}
