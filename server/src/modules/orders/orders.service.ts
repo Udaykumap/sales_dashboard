@@ -168,6 +168,8 @@ export class OrderService {
 
       // Total orders
       const totalOrders = await prisma.order.count();
+      const paidOrders = await prisma.order.count({ where: { status: 'PAID' } });
+      const pendingOrders = await prisma.order.count({ where: { status: 'PENDING' } });
       const totalOrdersToday = await prisma.order.count({ where: { createdAt: { gte: todayStart } } });
       const totalOrdersThisWeek = await prisma.order.count({ where: { createdAt: { gte: weekStart } } });
       const totalOrdersThisMonth = await prisma.order.count({ where: { createdAt: { gte: monthStart } } });
@@ -260,6 +262,8 @@ export class OrderService {
 
       return {
         totalOrders,
+        paidOrders,
+        pendingOrders,
         totalOrdersToday,
         totalOrdersThisWeek,
         totalOrdersThisMonth,
@@ -267,6 +271,7 @@ export class OrderService {
         totalSalesAmountToday,
         totalSalesAmountThisWeek,
         totalSalesAmountThisMonth,
+        totalRevenue: totalSalesAmount,
         topSellingProducts: topProducts,
         topCustomers,
         topSalesUsers

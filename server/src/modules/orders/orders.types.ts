@@ -49,6 +49,8 @@ export interface GetOrdersFilter {
 
 export interface OrderStatistics {
   totalOrders: number;
+  paidOrders: number;
+  pendingOrders: number;
   totalOrdersToday: number;
   totalOrdersThisWeek: number;
   totalOrdersThisMonth: number;
@@ -56,6 +58,7 @@ export interface OrderStatistics {
   totalSalesAmountToday: number;
   totalSalesAmountThisWeek: number;
   totalSalesAmountThisMonth: number;
+  totalRevenue: number;
   topSellingProducts: Array<{
     productId: string;
     productName: string;

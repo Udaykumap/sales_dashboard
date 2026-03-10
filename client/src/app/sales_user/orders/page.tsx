@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { apiFetch } from '@/lib/api'
 import DataTable from '@/components/DataTable'
+import SearchableSelect from '@/components/SearchableSelect'
 
 export default function SalesOrdersPage() {
   const [orders, setOrders] = useState<any[]>([])
@@ -43,7 +44,32 @@ export default function SalesOrdersPage() {
   const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i))
   const updateItem = (i: number, field: string, val: any) => {
     const copy = [...items]
-    copy[i] = { ...copy[i], [field]: field === 'quantity' ? parseInt(val) || 1 : val }
+    let newValue = field === 'quantity' ? parseInt(val) || 1 : val
+
+    // If updating quantity OR changing the product, validate inventory
+    const productId = field === 'productId' ? newValue : copy[i].productId
+    
+    if (productId) {
+      const prod = products.find(p => p.id === productId)
+      const maxStock = prod?.inventory?.quantity || 0
+      
+      if (field === 'quantity' && newValue > maxStock) {
+        setError(`Cannot add ${newValue} of ${prod?.name}. Only ${maxStock} in stock.`)
+        newValue = maxStock
+      } else if (field === 'productId') {
+        const currentQty = copy[i].quantity
+        if (currentQty > maxStock) {
+           setError(`Lowered quantity to ${maxStock} due to limited stock for ${prod?.name}.`)
+           copy[i].quantity = maxStock
+        } else {
+           setError('') // Clear error if stock is sufficient
+        }
+      } else {
+        setError('')
+      }
+    }
+
+    copy[i] = { ...copy[i], [field]: newValue }
     setItems(copy)
   }
 
@@ -145,12 +171,14 @@ export default function SalesOrdersPage() {
               </div>
 
               {customerMode === 'select' ? (
-                <select className="select" value={customerId} onChange={e => setCustomerId(e.target.value)} required>
-                  <option value="">Select a customer...</option>
-                  {customers.map(c => (
-                    <option key={c.id} value={c.id}>{c.name} — {c.phone}</option>
-                  ))}
-                </select>
+                <div style={{ maxWidth: '400px' }}>
+                  <SearchableSelect
+                    options={customers.map(c => ({ value: c.id, label: `${c.name} — ${c.phone}` }))}
+                    value={customerId}
+                    onChange={setCustomerId}
+                    placeholder="Select a customer..."
+                  />
+                </div>
               ) : (
                 <div className="form-grid">
                   <input className="input" placeholder="Customer Name *" value={newCustomer.name} onChange={e => setNewCustomer({ ...newCustomer, name: e.target.value })} required />
@@ -161,20 +189,37 @@ export default function SalesOrdersPage() {
               )}
             </div>
 
-            {/* ── Step 2: Products ──────────────────────── */}
             <div className="order-section">
               <h4 className="order-step">Step 2 — Select Products</h4>
               {items.map((item, i) => (
-                <div key={i} className="item-row">
-                  <select className="select" value={item.productId} onChange={e => updateItem(i, 'productId', e.target.value)} required>
-                    <option value="">Choose product...</option>
-                    {products.map(p => (
-                      <option key={p.id} value={p.id}>{p.name} — ₹{p.price}</option>
-                    ))}
-                  </select>
-                  <input className="input" type="number" min="1" value={item.quantity} onChange={e => updateItem(i, 'quantity', e.target.value)} placeholder="Qty" style={{ maxWidth: 80 }} />
+                <div key={i} className="item-row" style={{ alignItems: 'center' }}>
+                  <div style={{ flex: 1, minWidth: '300px' }}>
+                    <SearchableSelect
+                      options={products.map(p => {
+                        const qty = p.inventory?.quantity || 0;
+                        const stockText = qty > 0 ? `(Stock: ${qty})` : '(Out of Stock)';
+                        return { value: p.id, label: `${p.name} — ₹${p.price} ${stockText}` };
+                      })}
+                      value={item.productId}
+                      onChange={(val) => updateItem(i, 'productId', val)}
+                      placeholder="Choose product..."
+                    />
+                  </div>
+                  <input 
+                    className="input" 
+                    type="number" 
+                    min="1" 
+                    max={products.find(p => p.id === item.productId)?.inventory?.quantity || 1}
+                    value={item.quantity} 
+                    onChange={e => updateItem(i, 'quantity', e.target.value)} 
+                    placeholder="Qty" 
+                    style={{ maxWidth: 80, marginBottom: 0 }} 
+                  />
                   <span className="item-price">
                     ₹{(products.find(p => p.id === item.productId)?.price || 0) * item.quantity}
+                  </span>
+                  <span style={{ fontSize: '0.8em', color: 'var(--text-secondary)' }}>
+                    (Stock: {products.find(p => p.id === item.productId)?.inventory?.quantity || 0})
                   </span>
                   {items.length > 1 && (
                     <button type="button" onClick={() => removeItem(i)} className="btn btn-sm btn-danger">✕</button>

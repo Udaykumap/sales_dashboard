@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { apiFetch } from '@/lib/api'
 import DataTable from '@/components/DataTable'
+import SearchableSelect from '@/components/SearchableSelect'
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([])
@@ -11,6 +12,8 @@ export default function ProductsPage() {
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<any>(null)
   const [form, setForm] = useState({ name: '', sku: '', description: '', price: '', costPrice: '', categoryId: '' })
+  const [search, setSearch] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('')
 
   const loadData = async () => {
     try {
@@ -45,6 +48,13 @@ export default function ProductsPage() {
     setEditing(p); setShowForm(true)
   }
 
+  const filtered = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
+                          p.sku.toLowerCase().includes(search.toLowerCase())
+    const matchesCategory = categoryFilter ? p.categoryId === categoryFilter : true
+    return matchesSearch && matchesCategory
+  })
+
   if (loading) return <div className="loader"><span className="spinner" /> Loading products...</div>
 
   return (
@@ -56,6 +66,29 @@ export default function ProductsPage() {
         </button>
       </div>
 
+      {!showForm && (
+        <div className="filter-row" style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+          <input
+            className="input search-input"
+            placeholder="Search by name or SKU..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{ flex: 1, marginBottom: 0 }}
+          />
+          <select 
+            className="select" 
+            value={categoryFilter} 
+            onChange={e => setCategoryFilter(e.target.value)}
+            style={{ width: '250px', marginBottom: 0 }}
+          >
+            <option value="">All Categories</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {showForm && (
         <div className="form-card">
           <h3>{editing ? 'Edit Product' : 'Add Product'}</h3>
@@ -65,10 +98,13 @@ export default function ProductsPage() {
               <input className="input" placeholder="SKU" value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} required />
               <input className="input" placeholder="Price" type="number" step="0.01" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} required />
               <input className="input" placeholder="Cost Price" type="number" step="0.01" value={form.costPrice} onChange={e => setForm({ ...form, costPrice: e.target.value })} required />
-              <select className="select" value={form.categoryId} onChange={e => setForm({ ...form, categoryId: e.target.value })} required>
-                <option value="">Select Category</option>
-                {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+              <SearchableSelect
+                options={categories.map((c: any) => ({ value: c.id, label: c.name }))}
+                value={form.categoryId}
+                onChange={(val) => setForm({ ...form, categoryId: val })}
+                placeholder="Select Category"
+                required
+              />
               <input className="input" placeholder="Description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
             </div>
             <div className="form-actions">
@@ -93,7 +129,7 @@ export default function ProductsPage() {
             </div>
           )}
         ]}
-        data={products}
+        data={filtered}
         emptyText="No products found"
       />
     </div>
